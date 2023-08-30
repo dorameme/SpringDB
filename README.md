@@ -18,12 +18,14 @@
 
 ### 1. spring project 만들기
 
-Spring Boot 애플리케이션은 내장된 서블릿 컨테이너(Tomcat, Jetty, Undertow 등)를 사용하여 실행됩니다. 이 내장된 서블릿 컨테이너는 Spring Boot 애플리케이션을 실행하고 웹 요청을 처리합니다
-Spring Boot 애플리케이션이 서블릿 컨테이너의 생명주기에 의존하기 때문에
-만일 (톰캣도 네티도 없이) 서블릿컨테이너에 아무것도 없으면 스프링부트도 종료된다.
-즉 *WAS가 항시 대기상태로 머물러있어야 스프링부트도 계속 실행되는 상태가 된다.
-따라서 시작 중 예기치 않은 종료를 해결하려면 적절한 스타터를 사용하여 완전히 구성된 인스턴스를 가져와야 합니다. 현재 Spring Boot에는 내장된 Tomcat, Jetty 및 Undertow 서버에 대한 지원이 포함되어 있다.
-spring-boot-starter-web을 추가하면 스프링 부트 프로젝트에 필요한 톰캣 서버를 포함한 대부분의 라이브러리가 추가된다.
+Spring Boot 애플리케이션은 내장된 서블릿 컨테이너(Tomcat, Jetty, Undertow 등)를 사용하여 실행한다.      
+이 내장된 서블릿 컨테이너는 Spring Boot 애플리케이션을 실행하고 웹 요청을 처리합니다
+Spring Boot 애플리케이션이 서블릿 컨테이너의 생명주기에 의존하기 때문에    
+만일 (톰캣도 네티도 없이) 서블릿컨테이너에 아무것도 없으면 스프링부트도 종료된다.    
+즉 *WAS가 항시 대기상태로 머물러있어야 스프링부트도 계속 실행되는 상태가 된다.   
+따라서 시작 중 예기치 않은 종료를 해결하려면 적절한 스타터를 사용하여 완전히 구성된 인스턴스를 가져와야 한다.    
+현재 Spring Boot에는 내장된 Tomcat, Jetty 및 Undertow 서버에 대한 지원이 포함되어 있다.
+spring-boot-starter-web을 추가하면 스프링 부트 프로젝트에 필요한 톰캣 서버를 포함한 대부분의 라이브러리가 추가된다.    
 *WAS는 간단히 Web Server + Web Container(Sevlet Container)
 
 ### 2. H2 database
@@ -57,6 +59,7 @@ Jdbc등장으로 데이터베이스 변경이 쉬워짐
 
 Ex)애플리케이션 로직 > jdbc표준 인터페이스 -> oracle 드라이버 -> 오라클 DB
 
+결론 -> 덕분에 개발자는 JDBC만 쓸 줄 알면 된다.
 
 ### 4. SQL Mapper & ORM
 
@@ -88,8 +91,10 @@ Jdbc connection 인터페이스를 구현한  Org.h2.jdbc.jdbcConnection 구현�
 
 애플리케이션 로직->드라이버메니저-> h2 드라이버 호출
 
-### 6. SQL 인젝션을 피하려면... (해킹) 
-PreparedStatement를 이용해 데이터를 ?로 바인딩하여 넣어줘야한다.
+### 6. SQL 인젝션이란?
+입력이 가능한 폼에 공격자가 악의적인 SQL문을 삽입하여 디비 정보 열람 및 정보를 조작하는 해킹
+이를 막기위해 PreparedStatement를 이용해 데이터를 ?로 바인딩하여 넣어줘야한다.
+바인딩된 변수는 쿼리와 별도로 서버로 전송되므로 사용자가 입력한 구문이 쿼리로 실행될 수가 없다.
 
 ### 7. Lombok의 어노테이션
 자바 언어를 더 간결하고 보다 효율적으로 작성할 수 있도록 도와주는 라이브러리
@@ -102,5 +107,27 @@ PreparedStatement를 이용해 데이터를 ?로 바인딩하여 넣어줘야한
 롬복의 @Data는 @Getter, @Setter, @RequiredArgsConstructor, @ToString, @EqualsAndHashCode를 한꺼번에 적용한 것과 같은 효과를 가짐.
 주로 데이터 객체 (DTO)에서 사용됩니다.
 
+### PreparedStatement
+PreparedStatement은 SQL문을 저장,실행하는 객체
+주요 특징
+- 인자값으로 전달이 가능하다.(동적 쿼리)
+- 가독성이 높다.
+- 기존 Statement 보다 성능이 좋다.
+
+Execute
+1. 수행결과로 Boolean 타입의 값을 반환
+2. 모든 구문을 수행할 수 있다
+
+ExecuteQuery
+1. 수행결과로 ResultSet 객체인 rs변수에 객체의 값을 저장
+2. SELECT 구문을 수행할 때 사용되는 함수
+
+ExecuteUpdate
+1. 수행결과로 Int 타입의 값을 반환    
+2. SELECT 구문을 제외한 다른 구문을 수행할 때 사용되는 함수     
+   INSERT / DELETE / UPDATE 관련 구문에서는 반영된 레코드의 건수를 반환    
+3. CREATE / DROP 관련 구문에서는 -1 을 반환.
+
+애초에 Select하는 경우에만 객체값이 필요하기에 각각 메소드마다 반환 값이 다름.
 
 ## 커넥션풀과 데이터소스 이해
