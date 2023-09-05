@@ -1,0 +1,28 @@
+package hello.DB.service;
+
+import hello.DB.domain.Member;
+import hello.DB.repository.MemberRepositoryV1;
+import lombok.RequiredArgsConstructor;
+
+import java.sql.SQLException;
+
+@RequiredArgsConstructor
+public class MemberServiceV1 {
+    private final MemberRepositoryV1 memberRepository;
+
+    public void accountTransfer(String fromId, String toId, int money) throws SQLException{
+        Member fromMember=memberRepository.findById(fromId);
+        Member toMember = memberRepository.findById(toId);
+
+        memberRepository.update(fromId,fromMember.getMoney()-money);
+        validation(toMember);
+        memberRepository.update(toId,toMember.getMoney()+money);
+
+    }
+
+    private static void validation(Member toMember) {
+        if(toMember.getMemberId().equals("ex")){//멤버 아이디가 ex라면 예외발생시켜보자,
+            throw new IllegalStateException("이체중 예외발생");
+        }
+    }
+}
