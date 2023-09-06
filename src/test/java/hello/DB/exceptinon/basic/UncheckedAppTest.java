@@ -18,7 +18,6 @@ public class UncheckedAppTest {
         try {
             controller.request();
         } catch (Exception e) {
-            //e.printStackTrace();
             log.info("ex", e);
         }
     }
@@ -26,14 +25,16 @@ public class UncheckedAppTest {
         Service service = new Service();
         public void request() {
             service.logic();
-        } }
+        }
+    }
     static class Service {
         Repository repository = new Repository();
         NetworkClient networkClient = new NetworkClient();
         public void logic() {
             repository.call();
             networkClient.call();
-        } }
+        }
+    }
     static class NetworkClient {
         public void call() {
 
@@ -45,18 +46,18 @@ public class UncheckedAppTest {
                 runSQL();
             } catch (SQLException e) {
                 throw new RuntimeSQLException(e);
-            } }
+            }
+        }
         private void runSQL() throws SQLException {
             throw new SQLException("ex");
-        } }
+        }
+    }
     static class RuntimeConnectException extends RuntimeException {
         public RuntimeConnectException(String message) {
             super(message);
         }
     }
     static class RuntimeSQLException extends RuntimeException {
-        public RuntimeSQLException() {
-        }
         public RuntimeSQLException(Throwable cause) {
             super(cause);
         }
